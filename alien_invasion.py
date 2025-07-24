@@ -37,7 +37,9 @@ class AlienInvasion:
             if bullet.rect.bottom <= 0:
                 self.bullets.remove(bullet)
         # print(len(self.bullets))
+
     def _update_aliens(self):
+        self._check_fleet_edges()
         self.aliens.update()
 
     def _check_events(self):
@@ -77,7 +79,7 @@ class AlienInvasion:
         number_aliens_x = available_space_x // (2 * alien_width)
 
         ship_height = self.ship.rect.height
-        available_space_y = (self.settings.screen_height - 
+        available_space_y = (self.settings.screen_height -
                              (3 * alien_height) - ship_height)
         number_rows = available_space_y // (2 * alien_height)
         for row_number in range(number_rows):
@@ -99,6 +101,17 @@ class AlienInvasion:
             bullet.draw_bullet()
         self.aliens.draw(self.screen)
         pygame.display.flip()
+
+    def _check_fleet_edges(self):
+        for alien in self.aliens.sprites():
+            if alien.check_edges():
+                self._change_fleet_direction()
+                break
+
+    def _change_fleet_direction(self):
+        for alien in self.aliens.sprites():
+            alien.rect.y += self.settings.fleet_drop_speed
+        self.settings.fleet_direction *= -1
 
 
 if __name__ == '__main__':
